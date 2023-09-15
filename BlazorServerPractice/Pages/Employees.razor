@@ -1,0 +1,108 @@
+﻿@page "/employees"
+
+@using DataAccessLibrary
+@using DataAccessLibrary.Models
+@using BlazorServerPractice.Models
+
+@inject IEmployeeData _db
+
+<h1>Employees Page</h1>
+
+<h3>Insert New Employee</h3>
+
+<div style="margin-right: 75%;">
+    <EditForm Model="@newEmployee" OnValidSubmit="@InsertEmployee">
+        <!-- Validator -->
+        <DataAnnotationsValidator />
+        <!-- Displays error message -->
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="employeeId">Employee ID</label>
+            <InputNumber id="employeeId" @bind-Value="newEmployee.EmployeeId" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="firstName">First Name</label>
+            <InputText id="firstName" @bind-Value="newEmployee.FirstName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <InputText id="lastName" @bind-Value="newEmployee.LastName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label for="emailAddress">Email Address</label>
+            <InputText id="emailAddress" @bind-Value="newEmployee.EmailAddress" class="form-control" />
+        </div>
+        <div class="d-flex justify-content-end">
+            <button type="submit" class="btn btn-primary mt-2">Insert</button>
+        </div>
+    </EditForm>
+</div>
+
+<h3>Current Employees</h3>
+
+@if (employees == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Employee Id</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var employee in employees)
+            {
+                <tr>
+                    <td>@employee.EmployeeId</td>
+                    <td>@employee.FirstName</td>
+                    <td>@employee.LastName</td>
+                    <td>@employee.EmailAddress</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<EmployeeModel>? employees;
+    private DisplayEmployeeModel newEmployee = new DisplayEmployeeModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        employees = await _db.GetEmployee();
+    }
+
+    private async Task InsertEmployee()
+    {
+        // Map EmployeeModel
+        EmployeeModel e = new EmployeeModel
+            {
+                EmployeeId = newEmployee.EmployeeId,
+                FirstName = newEmployee.FirstName,
+                LastName = newEmployee.LastName,
+                EmailAddress = newEmployee.EmailAddress
+            };
+
+        await _db.InsertEmployee(e);
+
+        
+        if (employees == null)
+        {
+            employees = new List<EmployeeModel>();
+        }
+
+        // Add to List so db doesn't need to be called
+        employees.Add(e);
+
+        // Clear the Employee model or "form"
+        newEmployee = new DisplayEmployeeModel();
+    }
+}

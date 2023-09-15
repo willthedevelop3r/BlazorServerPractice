@@ -23,7 +23,7 @@ namespace DataAccessLibrary
             return _db.LoadData<EmployeeModel, dynamic>(sql, new { });
         }
 
-        public Task InsertPerson(EmployeeModel employee)
+        public Task InsertEmployee(EmployeeModel employee)
         {
             string sql = @"insert into dbo.Employee (EmployeeId, FirstName, LastName, EmailAddress)
                             values (@EmployeeId, @FirstName, @LastName, @EmailAddress);";
