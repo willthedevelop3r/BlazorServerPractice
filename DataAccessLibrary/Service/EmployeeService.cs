@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLibrary
+namespace DataAccessLibrary.Service
 {
-    public class EmployeeData : IEmployeeData
+    public class EmployeeService : IEmployeeService
     {
         private readonly ISqlDataAccess _db;
 
-        public EmployeeData(ISqlDataAccess db)
+        public EmployeeService(ISqlDataAccess db)
         {
             _db = db;
         }
@@ -23,12 +23,22 @@ namespace DataAccessLibrary
             return _db.LoadData<EmployeeModel, dynamic>(sql, new { });
         }
 
-        public Task InsertEmployee(EmployeeModel employee)
+        public Task CreateEmployee(EmployeeModel employee)
         {
             string sql = @"insert into dbo.Employee (EmployeeId, FirstName, LastName, EmailAddress)
                             values (@EmployeeId, @FirstName, @LastName, @EmailAddress);";
 
             return _db.SaveData(sql, employee);
+        }
+
+        public async Task<EmployeeModel?> GetEmployeeById(int id)
+        {
+            string sql = @"SELECT * FROM dbo.Employee WHERE EmployeeId = @Id";
+
+            var param = new { Id = id };
+
+            var results = await _db.LoadData<EmployeeModel, dynamic>(sql, param);
+            return results.FirstOrDefault();
         }
     }
 }

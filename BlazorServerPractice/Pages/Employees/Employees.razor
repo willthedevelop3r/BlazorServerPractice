@@ -1,21 +1,28 @@
 ﻿@page "/employees"
 
-@using DataAccessLibrary
+@using DataAccessLibrary.Service
 @using DataAccessLibrary.Models
 @using BlazorServerPractice.Models
 
-@inject IEmployeeData _db
+@inject IEmployeeService _db
 
 <h1>Employees Page</h1>
 
-<h3>Insert New Employee</h3>
+<h3>Create New Employee</h3>
 
 <div style="margin-right: 75%;">
-    <EditForm Model="@newEmployee" OnValidSubmit="@InsertEmployee">
+    <EditForm Model="@newEmployee" OnValidSubmit="@CreateEmployee">
         <!-- Validator -->
         <DataAnnotationsValidator />
         <!-- Displays error message -->
         <ValidationSummary />
+
+        @if (!string.IsNullOrEmpty(error_message))
+        {
+            <div class="alert alert-danger" role="alert">
+                @error_message
+            </div>
+        }
 
         <div class="form-group">
             <label for="employeeId">Employee ID</label>
@@ -34,7 +41,7 @@
             <InputText id="emailAddress" @bind-Value="newEmployee.EmailAddress" class="form-control" />
         </div>
         <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary mt-2">Insert</button>
+            <button type="submit" class="btn btn-primary mt-2">Create</button>
         </div>
     </EditForm>
 </div>
@@ -54,6 +61,7 @@ else
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email Address</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -64,6 +72,11 @@ else
                     <td>@employee.FirstName</td>
                     <td>@employee.LastName</td>
                     <td>@employee.EmailAddress</td>
+                    <td>
+                        <button class="btn btn-primary">Edit</button>                                      
+                        <NavLink href="@($"/deleteemployee/{employee.EmployeeId}")" class="btn btn-danger">Delete</NavLink>
+                  </td>
+                    
                 </tr>
             }
         </tbody>
@@ -74,15 +87,21 @@ else
 @code {
     private List<EmployeeModel>? employees;
     private DisplayEmployeeModel newEmployee = new DisplayEmployeeModel();
+    private string error_message;
 
     protected override async Task OnInitializedAsync()
     {
         employees = await _db.GetEmployee();
     }
 
-    private async Task InsertEmployee()
+    private async Task CreateEmployee()
     {
-        // Map EmployeeModel
+        if (employees != null && employees.Any(e => e.EmployeeId == newEmployee.EmployeeId))
+        {
+            error_message = "Employee ID already exists. Please use a unique ID.";
+            return;
+        }
+
         EmployeeModel e = new EmployeeModel
             {
                 EmployeeId = newEmployee.EmployeeId,
@@ -91,18 +110,17 @@ else
                 EmailAddress = newEmployee.EmailAddress
             };
 
-        await _db.InsertEmployee(e);
+        await _db.CreateEmployee(e);
 
-        
         if (employees == null)
         {
             employees = new List<EmployeeModel>();
         }
 
-        // Add to List so db doesn't need to be called
         employees.Add(e);
-
-        // Clear the Employee model or "form"
         newEmployee = new DisplayEmployeeModel();
+
+        // Clear the error message
+        error_message = null;
     }
 }

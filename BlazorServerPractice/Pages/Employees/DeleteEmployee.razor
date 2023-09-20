@@ -1,0 +1,63 @@
+﻿@page "/deleteemployee/{EmployeeId}"
+
+@using DataAccessLibrary.Service
+@using DataAccessLibrary.Models
+@using BlazorServerPractice.Models
+
+@inject IEmployeeService _db
+
+<h1>Delete Employee</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <hr />
+    @if (employee != null)
+    {
+        <dl class="row">
+            <dt class="col-sm-2">
+                Employee ID
+            </dt>
+            <dd class="col-sm-10">
+                @employee.EmployeeId
+            </dd>
+            <dt class="col-sm-2">
+                First Name
+            </dt>
+            <dd class="col-sm-10">
+                @employee.FirstName
+            </dd>
+            <dt class="col-sm-2">
+                Last Name
+            </dt>
+            <dd class="col-sm-10">
+                @employee.LastName
+            </dd>
+            <dt class="col-sm-2">
+                Email Address
+            </dt>
+            <dd class="col-sm-10">
+                @employee.EmailAddress
+            </dd>
+        </dl>
+        <!-- Add buttons to confirm or cancel the deletion -->
+    }
+    else
+    {
+        <p><em>Loading...</em></p>
+    }
+</div>
+
+
+@code {
+    [Parameter]
+    public string EmployeeId { get; set; }
+
+    private int EmployeeIdAsInt => int.Parse(EmployeeId);
+
+    private EmployeeModel? employee;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employee = await _db.GetEmployeeById(EmployeeIdAsInt);
+    }
+}
