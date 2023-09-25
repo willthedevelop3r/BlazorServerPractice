@@ -73,7 +73,7 @@ else
                     <td>@employee.LastName</td>
                     <td>@employee.EmailAddress</td>
                     <td>
-                        <button class="btn btn-primary">Edit</button>                                      
+                        <NavLink href="@($"/editemployee/{employee.EmployeeId}")" class="btn btn-primary">Edit</NavLink>                                 
                         <NavLink href="@($"/deleteemployee/{employee.EmployeeId}")" class="btn btn-danger">Delete</NavLink>
                   </td>
                     

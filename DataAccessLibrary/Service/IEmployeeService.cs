@@ -9,6 +9,8 @@ namespace DataAccessLibrary.Service
         Task CreateEmployee(EmployeeModel employee);
         Task<EmployeeModel?> GetEmployeeById(int id);
 
+        Task EditEmployee(EmployeeModel employee, int originalEmployeeId);
+
         Task DeleteEmployeeById(int id);
     }
 }

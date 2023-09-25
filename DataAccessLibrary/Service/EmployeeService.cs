@@ -18,15 +18,15 @@ namespace DataAccessLibrary.Service
 
         public Task<List<EmployeeModel>> GetEmployee()
         {
-            string sql = "select * from dbo.Employee";
+            string sql = "SELECT * FROM dbo.Employee";
 
             return _db.LoadData<EmployeeModel, dynamic>(sql, new { });
         }
 
         public Task CreateEmployee(EmployeeModel employee)
         {
-            string sql = @"insert into dbo.Employee (EmployeeId, FirstName, LastName, EmailAddress)
-                            values (@EmployeeId, @FirstName, @LastName, @EmailAddress);";
+            string sql = @"INSERT INTO dbo.Employee (EmployeeId, FirstName, LastName, EmailAddress)
+                            VALUES (@EmployeeId, @FirstName, @LastName, @EmailAddress);";
 
             return _db.SaveData(sql, employee);
         }
@@ -39,6 +39,35 @@ namespace DataAccessLibrary.Service
 
             var results = await _db.LoadData<EmployeeModel, dynamic>(sql, param);
             return results.FirstOrDefault();
+        }
+
+        public async Task EditEmployee(EmployeeModel model, int originalEmployeeId)
+        {
+            var existingEmployee = await GetEmployeeById(model.EmployeeId);
+
+            if (existingEmployee != null && existingEmployee.EmployeeId != originalEmployeeId)
+            {
+                throw new InvalidOperationException("Employee with this ID already exists");
+            }
+
+            string sql = @"UPDATE dbo.Employee 
+                   SET 
+                       EmployeeId = @EmployeeId,
+                       FirstName = @FirstName, 
+                       LastName = @LastName, 
+                       EmailAddress = @EmailAddress 
+                   WHERE EmployeeId = @OriginalEmployeeId";
+
+            var parameters = new
+            {
+                EmployeeId = model.EmployeeId,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                EmailAddress = model.EmailAddress,
+                OriginalEmployeeId = originalEmployeeId
+            };
+
+            await _db.SaveData(sql, parameters);
         }
 
         public Task DeleteEmployeeById(int id)

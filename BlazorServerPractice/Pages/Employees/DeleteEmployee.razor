@@ -40,7 +40,7 @@
                 @employee.EmailAddress
             </dd>
         </dl>
-        <button @onclick="DeleteCurrentEmployee" class="btn btn-danger">Confirm Delete</button>
+        <button @onclick="HandleDelete" class="btn btn-danger">Confirm Delete</button>
         <button @onclick="CancelDelete" class="btn btn-secondary">Cancel</button>
     }
     else
@@ -64,7 +64,7 @@
         employee = await _db.GetEmployeeById(EmployeeIdAsInt);
     }
 
-    private async Task DeleteCurrentEmployee()
+    private async Task HandleDelete()
     {
         await _db.DeleteEmployeeById(EmployeeIdAsInt);
         NavigationManager.NavigateTo("/employees");
