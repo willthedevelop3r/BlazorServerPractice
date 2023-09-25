@@ -40,5 +40,14 @@ namespace DataAccessLibrary.Service
             var results = await _db.LoadData<EmployeeModel, dynamic>(sql, param);
             return results.FirstOrDefault();
         }
+
+        public Task DeleteEmployeeById(int id)
+        {
+            string sql = @"DELETE FROM dbo.Employee WHERE EmployeeId = @Id";
+
+            var param = new { Id = id };
+
+            return _db.SaveData(sql, param);
+        }
     }
 }

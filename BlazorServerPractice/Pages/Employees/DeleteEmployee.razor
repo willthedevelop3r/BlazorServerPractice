@@ -5,6 +5,7 @@
 @using BlazorServerPractice.Models
 
 @inject IEmployeeService _db
+@inject NavigationManager NavigationManager
 
 <h1>Delete Employee</h1>
 
@@ -39,7 +40,8 @@
                 @employee.EmailAddress
             </dd>
         </dl>
-        <!-- Add buttons to confirm or cancel the deletion -->
+        <button @onclick="DeleteCurrentEmployee" class="btn btn-danger">Confirm Delete</button>
+        <button @onclick="CancelDelete" class="btn btn-secondary">Cancel</button>
     }
     else
     {
@@ -49,6 +51,7 @@
 
 
 @code {
+
     [Parameter]
     public string EmployeeId { get; set; }
 
@@ -59,5 +62,16 @@
     protected override async Task OnInitializedAsync()
     {
         employee = await _db.GetEmployeeById(EmployeeIdAsInt);
+    }
+
+    private async Task DeleteCurrentEmployee()
+    {
+        await _db.DeleteEmployeeById(EmployeeIdAsInt);
+        NavigationManager.NavigateTo("/employees");
+    }
+
+    private void CancelDelete()
+    {
+        NavigationManager.NavigateTo("/employees");
     }
 }
