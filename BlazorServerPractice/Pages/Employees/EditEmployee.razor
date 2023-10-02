@@ -1,10 +1,10 @@
 ﻿@page "/editemployee/{EmployeeId}"
 
-@using DataAccessLibrary.Service
+@using DataAccessLibrary.Repository
 @using DataAccessLibrary.Models
 @using BlazorServerPractice.Models
 
-@inject IEmployeeService _db
+@inject IEmployeeRepository _db
 @inject NavigationManager NavigationManager
 
 @if (employee == null)

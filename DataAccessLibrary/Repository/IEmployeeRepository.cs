@@ -1,8 +1,8 @@
 ﻿using DataAccessLibrary.Models;
 
-namespace DataAccessLibrary.Service
+namespace DataAccessLibrary.Repository
 {
-    public interface IEmployeeService
+    public interface IEmployeeRepository
 
     {
         Task<List<EmployeeModel>> GetEmployee();

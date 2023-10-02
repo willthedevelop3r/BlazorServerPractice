@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLibrary.Service
+namespace DataAccessLibrary.Repository
 {
-    public class EmployeeService : IEmployeeService
+    public class EmployeeRepository : IEmployeeRepository
     {
         private readonly ISqlDataAccess _db;
 
-        public EmployeeService(ISqlDataAccess db)
+        public EmployeeRepository(ISqlDataAccess db)
         {
             _db = db;
         }
